@@ -1,4 +1,4 @@
-REPO := https://github.com/Webconverger/webc.git
+REPO := git://github.com/bizplay/kiosk-os-chroot.git
 OUTPUT := /srv/www/build.webconverger.org/output
 
 # Check if live-build is new enough
