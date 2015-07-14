@@ -29,11 +29,13 @@ VDI=binary.vdi
 build-vbox-hdd: build-hdd
 	# If there's already a vdi file, try to keep the UUID the same,
 	# so you don't have to re-add the vdi file in Virtualbox.
+	# This creates a 2GB image, the rest of the space can be used to
+	# resize the data partition into
 	if [ -f "$(VDI)" ]; then \
 		UUID="--uuid $$(VBoxManage showhdinfo $(VDI) | awk '$$1 == "UUID:" {print $$2}')"; \
 		rm -f $(VDI); \
 	fi; \
-	VBoxManage convertfromraw live-image-i386 $(VDI) $$UUID
+	cat live-image-i386 | VBoxManage convertfromraw stdin $(VDI) $$((4096*1024*1024)) $$UUID
 
 binary: clean
 	# Check that the chroot has no changes
