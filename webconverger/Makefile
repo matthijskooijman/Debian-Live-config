@@ -78,6 +78,7 @@ binary: clean
 	# non-deterministic inode numbers.
 	rm -rf binary/live/filesystem.git/index
 	$(SUDO) lb binary_linux-image
+	$(SUDO) lb binary_loopback_cfg # This generates grub.cfg
 	$(SUDO) lb binary_syslinux \
 	  || (printf 1>&2 "  %s\n" "" \
 		"If live-build complains about /usr/share/ISOLINUX, or" \
@@ -87,6 +88,8 @@ binary: clean
 		"symlink /usr/share/ISOLINUX -> /usr/lib/ISOLINUX and/or" \
 		"/usr/share/SYSLINUX -> /usr/lib/SYSLINUX." "" \
 	      && false)
+	$(SUDO) lb binary_disk # This generates a binary/.disk directory that binary_iso writes and (for some reason) grub looks for a .disk/info file it seems
+	$(SUDO) lb binary_grub-efi
 
 	# Copy the template bootloader config, so the config can be
 	# regenerated on upgrades (but only on an hdd image, since an
@@ -100,8 +103,9 @@ binary: clean
 	# (that does not support hardlinks). This happens from
 	# live-build version 1:20161202, until https://bugs.debian.org/873640
 	# is merged.
-	$(SUDO) rm -f binary/live/initrd.img-*
-	$(SUDO) rm -f binary/live/vmlinuz-*
+	# For grub, do not delete these since grub config references them
+	#$(SUDO) rm -f binary/live/initrd.img-*
+	#$(SUDO) rm -f binary/live/vmlinuz-*
 
 	# "Clamp" the time to SOURCE_DATE_EPOCH when the file is more recent to keep
 	# the original times for files that have not been created or modified during
